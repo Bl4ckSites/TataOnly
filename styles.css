@@ -1,0 +1,465 @@
+/* -------------------------------------------------------------------
+      RESET & VARIÁVEIS GLOBAIS
+    ------------------------------------------------------------------- */
+    :root {
+      --primary-color: #ff4081;
+      --secondary-color: #536dfe;
+      --accent-color: #69f0ae;
+      --dark-color: #2d2d2d;
+      --light-color: #f8f8f8;
+      --cursor-size: 20px;
+      --border-color: #536dfe; /* mesma paleta dos botões */
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 100px;
+      /* Bloqueia o pinch-to-zoom e ações de zoom em dispositivos móveis */
+      touch-action: manipulation;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f2f2f2;
+      color: #333;
+      overflow-x: hidden;
+      cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23ff4081" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>'), auto;
+      user-select: none; /* prevenir seleção de texto indesejada */
+    }
+    
+    body.loaded {
+      opacity: 1;
+      transition: opacity 1s ease-in-out;
+    }
+    
+    /* -------------------------------------------------------------------
+      CURSOR PERSONALIZADO
+    ------------------------------------------------------------------- */
+    .custom-cursor {
+      position: fixed;
+      width: var(--cursor-size);
+      height: var(--cursor-size);
+      border-radius: 50%;
+      background-color: var(--primary-color);
+      mix-blend-mode: difference;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s ease, width 0.3s ease, height 0.3s ease;
+    }
+    
+    .custom-cursor.active {
+      width: calc(var(--cursor-size) * 1.5);
+      height: calc(var(--cursor-size) * 1.5);
+      background-color: var(--accent-color);
+    }
+    
+    .custom-cursor.click {
+      width: calc(var(--cursor-size) * 0.8);
+      height: calc(var(--cursor-size) * 0.8);
+    }
+    
+    /* -------------------------------------------------------------------
+      CABEÇALHO, FOTO DE CAPA E PERFIL
+    ------------------------------------------------------------------- */
+    .header-container {
+      position: relative;
+      width: 100%;
+      height: 450px;
+      overflow: hidden;
+      perspective: 1000px;
+    }
+    
+    .cover-photo {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('background-profile.png');
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      z-index: -1;
+      transform-style: preserve-3d;
+      animation: coverEntrance 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    
+    @keyframes coverEntrance {
+      from {
+        opacity: 0;
+        transform: translateY(50px) rotateX(10deg);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) rotateX(0);
+      }
+    }
+    
+    .profile-container {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      perspective: 1000px;
+    }
+    
+    .profile-frame {
+      position: relative;
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      transform-style: preserve-3d;
+      transition: transform 0.5s ease, box-shadow 0.3s ease;
+      animation: profileEntrance 1s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      animation-delay: 0.3s;
+      cursor: pointer;
+    }
+    
+    @keyframes profileEntrance {
+      from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.9) rotateY(90deg);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotateY(0);
+      }
+    }
+    
+    .profile-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      display: block;
+      position: relative;
+      backface-visibility: hidden;
+    }
+    
+    /* Animação de rotação para a foto de perfil */
+    @keyframes rotateProfile {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    
+    /* -------------------------------------------------------------------
+      TEXTO COM EFETOS DE DIGITAÇÃO
+    ------------------------------------------------------------------- */
+    .title-overlay {
+      margin-top: 15px;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #fff;
+      text-align: center;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+      white-space: nowrap;
+      overflow: hidden;
+      border-right: 2px solid var(--primary-color);
+      animation: typing 2s steps(40, end), blink-caret 0.75s step-end infinite;
+    }
+    
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+    
+    @keyframes blink-caret {
+      from, to { border-color: transparent; }
+      50% { border-color: var(--primary-color); }
+    }
+    
+    .profile-name {
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      margin: 15px 0 5px;
+      font-weight: 600;
+      color: #fff;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+      animation: fadeInUp 1s ease both;
+      animation-delay: 0.5s;
+    }
+    
+    .profile-description {
+      font-size: 0.95rem;
+      color: #ddd;
+      max-width: 300px;
+      margin: 0 auto;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+      animation: fadeInUp 1s ease both;
+      animation-delay: 0.7s;
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* -------------------------------------------------------------------
+      CONTEÚDO PRINCIPAL & GRID DE POSTAGENS
+    ------------------------------------------------------------------- */
+    .main-content {
+      width: 90%;
+      max-width: 900px;
+      margin: 60px auto 40px;
+      padding-bottom: 40px;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    
+    body.loaded .main-content {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    /* GRID responsivo para as postagens/fotos */
+    .posts-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+    
+    /* Em telas a partir de 768px, exibir 3 colunas */
+    @media (min-width: 768px) {
+      .posts-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    
+    /* CARD de foto com bordas, sombra e hover */
+    .photo-card {
+      position: relative;
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      background-color: #fff;
+      cursor: pointer;
+    }
+    
+    .photo-card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+    }
+    
+    .photo-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+      user-select: none;
+      pointer-events: none;  /* impede ação de download via interação direta */
+    }
+    
+    /* Máscara transparente para dificultar screenshots */
+    .photo-mask {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: transparent;
+      user-select: none;
+      pointer-events: none;
+    }
+    
+    /* -------------------------------------------------------------------
+      OVERLAY DE AMPLIAÇÃO DA FOTO
+    ------------------------------------------------------------------- */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease;
+    }
+    
+    .overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .overlay img {
+      width: 90%;
+      max-width: 800px;
+      max-height: 90vh;
+      object-fit: contain;
+      border-radius: 12px;
+      user-select: none;
+      pointer-events: none;
+      /* Limita o zoom máximo conforme solicitado */
+      transform: scale(1);
+    }
+    
+    /* -------------------------------------------------------------------
+      CARROSSEL MODERNO
+    ------------------------------------------------------------------- */
+    .carousel-container {
+      position: relative;
+      width: 100%;
+      max-width: 900px;
+      margin: 40px auto;
+      background: linear-gradient(135deg, #f8f8f8, #e0e0e0);
+      border-radius: 12px;
+      overflow: hidden;
+      user-select: none;
+    }
+    
+    .carousel-inner {
+      display: flex;
+      transition: transform 0.5s ease;
+    }
+    
+    .carousel-item {
+      min-width: 100%;
+      user-select: none;
+    }
+    
+    .carousel-item img {
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+    }
+    
+    /* Ícones de seta com CSS simples para navegação */
+    .carousel-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.7);
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      border-radius: 50%;
+      transition: background 0.3s ease;
+      user-select: none;
+    }
+    
+    .carousel-arrow:hover,
+    .carousel-arrow:focus {
+      background: rgba(255, 255, 255, 0.9);
+      outline: none;
+    }
+    
+    .carousel-arrow.left {
+      left: 10px;
+    }
+    
+    .carousel-arrow.right {
+      right: 10px;
+    }
+    
+    /* -------------------------------------------------------------------
+      BOTÕES E LINKS (mantendo a paleta dos botões existentes)
+    ------------------------------------------------------------------- */
+    .links-container {
+      display: flex;
+      flex-direction: column;
+      margin-top: 20px;
+    }
+    
+    .link-button {
+      position: relative;
+      display: flex;
+      align-items: center;
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 12px 15px;
+      margin: 10px 0;
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .link-button:hover {
+      background-color: #f0f0f0;
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    
+    .link-button:active {
+      transform: translateY(1px) scale(0.98);
+    }
+    
+    .link-button .icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      margin-right: 10px;
+      color: #fff;
+      transition: transform 0.3s ease;
+    }
+    
+    .link-button:hover .icon {
+      transform: rotate(15deg) scale(1.1);
+    }
+    
+    /* -------------------------------------------------------------------
+      ESTILOS GERAIS DE FOCO PARA ACESSIBILIDADE
+    ------------------------------------------------------------------- */
+    a:focus, button:focus {
+      outline: 2px solid var(--accent-color);
+      outline-offset: 2px;
+    }
+    
+    /* -------------------------------------------------------------------
+      ANIMAÇÕES GERAIS
+    ------------------------------------------------------------------- */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes popIn {
+      0% { transform: scale(0.9); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    
+    .scroll-animate {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    
+    .scroll-animate.active {
+      opacity: 1;
+      transform: translateY(0);
+    }

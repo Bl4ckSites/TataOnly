@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Políticas de Segurança -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: 'unsafe-inline' 'unsafe-eval'; img-src 'self' https: data:;">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), interest-cohort=()">
+  <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  <!-- Otimizações de Performance -->
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+  <link rel="preload" href="styles.css" as="style">
+
+  <!-- Metatags para Redes Sociais -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Tata Only - Links">
+  <!-- Duas referências para a imagem de pré-visualização: a imagem local e o link direto do Google Drive -->
+  <meta property="og:image" content="imagem.jpg">
+  <meta property="og:image" content="https://drive.google.com/uc?export=view&id=1ZdeUBZoEX2QzdlWMl-QnPLmCGdJtQwX5">
+  <meta property="og:url" content="https://seusite.com/">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Ícones e Tema -->
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta name="theme-color" content="#2d2d2d">
+  
+  <!-- Fontes e Estilos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Estilos internos para animações, responsividade e layout -->
+  <style>
+    /* Estilos para os botões de link */
+    .link-button {
+      opacity: 0;
+      transition: transform 0.6s ease-out, opacity 0.6s ease-out;
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .slide-in-right {
+      transform: translateX(50%);
+    }
+    .slide-in-left {
+      transform: translateX(-50%);
+    }
+    .link-button.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .link-button .icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 50px;
+      height: 50px;
+      margin-right: 1rem;
+      border-radius: 50%;
+    }
+    .link-button .text .title {
+      font-weight: 600;
+      color: #333;
+    }
+    .link-button .text .url {
+      font-size: 0.9rem;
+      color: #777;
+    }
+    /* Estilo para alerta customizado */
+    .custom-alert {
+      position: absolute;
+      background-color: #ff4081;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      z-index: 1000;
+      animation: fadeIn 0.3s ease-out;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translate(-50%, 10px); }
+      to { opacity: 1; transform: translate(-50%, 0); }
+    }
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+
+    /* Estilos para a galeria de prévias */
+    .preview-grid {
+      display: grid;
+      gap: 1rem;
+      padding: 1rem;
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @media (min-width: 768px) {
+      .preview-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+    .preview-item {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    .preview-item.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .preview-item:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      z-index: 10;
+    }
+    .preview-item:active { 
+      transform: scale(0.98); 
+    }
+    .preview-image {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: 12px;
+    }
+    .preview-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .preview-item:hover .preview-overlay { 
+      opacity: 1; 
+    }
+    .preview-icon {
+      font-size: 2rem;
+      color: white;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    }
+  </style>
+
+  <title>Tata Only - Links</title>
+</head>
+<body>
+  <!-- Cabeçalho com Foto de Perfil -->
+  <div class="header-container">
+    <div class="cover-photo"></div>
+    <div class="profile-container">
+      <div class="profile-frame">
+        <div class="profile-background"></div>
+        <div class="profile-thumbnail"></div>
+        <img src="profile.png" 
+             alt="Tata Only - Perfil" 
+             class="profile-photo"
+             loading="eager">
+      </div>
+      <div class="title-overlay">Tata Only</div>
+      <div class="profile-info">
+        <h1 class="profile-name">ㅤㅤ</h1>
+        <p class="profile-description">ㅤㅤ</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Conteúdo Principal -->
+  <div class="main-content">
+    <!-- Seção de Links -->
+    <div class="links-container">
+      <!-- Botão Telegram Original (entrada da direita) -->
+      <a href="https://t.me/tatahzinhatelegram" class="link-button slide-in-right" target="_blank" rel="noopener noreferrer">
+        <div class="icon" style="background-color: #0088cc;">
+          <i class="fab fa-telegram"></i>
+        </div>
+        <div class="text">
+          <div class="title">Telegram Prévias🔞</div>
+          <div class="description">Receba prévias exclusivas e novidades.</div>
+        </div>
+      </a>
+
+      <!-- Novo Botão Telegram VIP (entrada da esquerda) -->
+      <a href="https://t.me/Tataahzinha" class="link-button slide-in-left" target="_blank" rel="noopener noreferrer">
+        <div class="icon" style="background-color: #0088cc;">
+          <i class="fab fa-telegram"></i>
+        </div>
+        <div class="text">
+          <div class="title">Telegram VIP🔞</div>
+          <div class="description">Atendimento exclusivo para conteúdo Premium.</div>
+        </div>
+      </a>
+
+      <!-- Botão WhatsApp (entrada da direita) -->
+      <a href="https://wa.me/553491964691" class="link-button slide-in-right" target="_blank" rel="noopener noreferrer">
+        <div class="icon" style="background-color: #25D366;">
+          <i class="fab fa-whatsapp"></i>
+        </div>
+        <div class="text">
+          <div class="title">WhatsApp🔞</div>
+          <div class="description">Compre por aqui.</div>
+        </div>
+      </a>
+
+      <!-- Botão Instagram (entrada da esquerda) -->
+      <a href="https://www.instagram.com/__tata_zinha?igsh=bjg3MHU5NXB5bTR6" class="link-button slide-in-left" target="_blank" rel="noopener noreferrer">
+        <div class="icon" style="background: linear-gradient(45deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D, #F56040, #F77737, #FCAF45, #FFDC80);">
+          <i class="fab fa-instagram"></i>
+        </div>
+        <div class="text">
+          <div class="title">Instagram🔞</div>
+          <div class="description">Veja e descubra.</div>
+        </div>
+      </a>
+    </div>
+
+    <hr class="divider-line">
+
+    <!-- Galeria de Prévia -->
+    <div class="previews-container">
+      <h2 class="section-title">Pacotes🔥</h2>
+      <div class="preview-grid">
+        <a href="https://t.me/tatahzinhatelegram" class="preview-item" target="_blank" rel="noopener noreferrer">
+          <img src="preview1.jpg" alt="Postagem 1" class="preview-image" loading="lazy">
+          <div class="preview-overlay">
+            <i class="fas fa-play preview-icon"></i>
+          </div>
+        </a>
+        <a href="https://t.me/tatahzinhatelegram" class="preview-item" target="_blank" rel="noopener noreferrer">
+          <img src="preview2.jpg" alt="Postagem 2" class="preview-image" loading="lazy">
+          <div class="preview-overlay">
+            <i class="fas fa-image preview-icon"></i>
+          </div>
+        </a>
+        <a href="https://t.me/tatahzinhatelegram" class="preview-item" target="_blank" rel="noopener noreferrer">
+          <img src="preview3.jpg" alt="Postagem 3" class="preview-image" loading="lazy">
+          <div class="preview-overlay">
+            <i class="fas fa-play preview-icon"></i>
+          </div>
+        </a>
+        <a href="https://t.me/tatahzinhatelegram" class="preview-item" target="_blank" rel="noopener noreferrer">
+          <img src="preview4.jpg" alt="Postagem 4" class="preview-image" loading="lazy">
+          <div class="preview-overlay">
+            <i class="fas fa-image preview-icon"></i>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Script para ativar animações via Intersection Observer -->
+  <script>
+    const observerOptions = { threshold: 0.2 };
+
+    const observerCallback = (entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+    document.querySelectorAll('.link-button, .preview-item').forEach(element => {
+      observer.observe(element);
+    });
+  </script>
+  
+  <!-- Inclusão de scripts adicionais -->
+  <script src="javascript.js"></script>
+</body>
+</html>
